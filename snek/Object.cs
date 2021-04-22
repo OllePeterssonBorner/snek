@@ -36,6 +36,7 @@ namespace snek
             this._scale = scale;
             this._bb = new Rectangle((int)pos.X, (int)pos.Y, img.Width, img.Height);
             this._rotation = rotation;
+            this._color = Color.White;
         }
 
         public virtual void Update(int screen_width, int screen_height)
