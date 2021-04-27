@@ -15,9 +15,18 @@ namespace snek
         public List<Snek> _Snek_Objects;
         public List<Object> _Misc_Objects;
 
-        private int screen_width = 1920;
-        private int screen_height = 1080;
-       
+        public static int screen_width = 1920;
+        public static int screen_height = 1080;
+
+        public static int arbitraryNumX = 65;
+        public static int arbitraryNumY = 185;
+
+        public int arbitraryEquationX = screen_width / 2 + arbitraryNumY;
+        public int arbitraryEquationY = screen_height / 2 + arbitraryNumX;
+
+
+
+
 
         public float speed = 0.0f;
         public float rotation = 0.0f;
@@ -61,8 +70,14 @@ namespace snek
            
             
            _Snek_Objects.Add(new Snek(SnekHeadImg, new Vector2(screen_width / 2, screen_height / 2), new Vector2(1, 1), speed, rotation, snekscale, time));
-            
-           
+
+            for (int i = 0; i < 4; i++)
+            {
+                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(arbitraryEquationX + (arbitraryNumX * i), arbitraryEquationY), new Vector2(1, 1), speed, rotation, snekscale, time));
+            }
+          
+
+
 
         }
 
