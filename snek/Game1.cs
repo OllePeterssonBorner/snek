@@ -17,6 +17,7 @@ namespace snek
         public List<Object> _Snek_Objects;
         public List<Object> _Misc_Objects;
         public List<gridbackg> _backg_Objects;
+        public List<Object> _Apple_Objects;
 
 
         public static int screen_width = 1920;
@@ -61,6 +62,7 @@ namespace snek
             _Snek_Objects = new List<Object>();
             _Misc_Objects = new List<Object>();
             _backg_Objects = new List<gridbackg>();
+            _Apple_Objects = new List<Object>();
 
         _graphics.PreferredBackBufferWidth = screen_width;
             _graphics.PreferredBackBufferHeight = screen_height;
@@ -121,6 +123,8 @@ namespace snek
                 }
             }
 
+            
+
 
 
         }
@@ -159,6 +163,16 @@ namespace snek
 
         protected override void Update(GameTime gameTime)
         {
+            Random r = new Random();
+
+            int applepos = r.Next(0, _backg_Objects.Count);
+
+            if (_Apple_Objects.Count == 0)
+            {
+                _Apple_Objects.Add(new Object(AppleImg, new Vector2(_backg_Objects[applepos]._pos.X, _backg_Objects[applepos]._pos.Y), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+            }
+           
+
             KeyMouseReader.Update();
             
                 
@@ -242,6 +256,10 @@ namespace snek
                         {
                             o.Update(screen_width, screen_height);
                         }
+                        foreach (Object o in _Apple_Objects)
+                        {
+                           o.Update(screen_width, screen_height);
+                        }
 
                         base.Update(gameTime);
 
@@ -259,6 +277,11 @@ namespace snek
             }
 
             foreach (Snek o in _Snek_Objects)
+            {
+                o.Draw(_spriteBatch);
+            }
+            
+            foreach (Object o in _Apple_Objects)
             {
                 o.Draw(_spriteBatch);
             }
