@@ -19,6 +19,7 @@ namespace snek
         {
             base.Update(screen_width, screen_height);
             //_rotation += 0.03f;
+           _pos += _dir * _speed;
         }
 
         public override void Draw(SpriteBatch sb)
