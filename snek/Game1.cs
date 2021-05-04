@@ -182,7 +182,7 @@ namespace snek
                                         _Snek_Objects[0]._dir = new Vector2(0, -1);
                                     }
 
-
+                                     
 
                               }
                         }
