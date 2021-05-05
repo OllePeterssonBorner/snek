@@ -18,7 +18,7 @@ namespace snek
         protected Vector2 _origin;
         protected float _scale;
         protected float _rotation;
-        protected Rectangle _bb;
+        public Rectangle _bb;
         public bool hit;
 
 
@@ -32,7 +32,7 @@ namespace snek
             this._dir = dir;
             this._speed = speed;
             this._time = time;
-            this._origin = new Vector2(_img.Width / 2, _img.Height / 2);
+            this._origin = Vector2.Zero;
             this._scale = scale;
             this._bb = new Rectangle((int)pos.X, (int)pos.Y, img.Width, img.Height);
             this._rotation = rotation;
@@ -42,12 +42,32 @@ namespace snek
 
         public virtual void Update(int screen_width, int screen_height)
         {
-            //_pos += _dir * _speed;
+            
         }
 
         public virtual void Draw(SpriteBatch sb)
         {
             sb.Draw(_img, _pos, null, _color, _rotation, _origin, _scale, SpriteEffects.None, 0.0f);
+        }
+
+        public bool Hit(Rectangle otherbb)
+        {
+
+
+            if (_bb.Intersects(otherbb))
+            {
+
+                return true;
+
+
+            }
+            return false;
+
+
+
+
+
+
         }
     }
 

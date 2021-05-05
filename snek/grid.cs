@@ -33,6 +33,11 @@ namespace snek
            base(img, pos, dir, speed, rotation, scale, time)
         { 
         }
+
+
     }
+
+
+
 
 }

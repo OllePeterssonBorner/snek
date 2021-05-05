@@ -29,8 +29,8 @@ namespace snek
         private float odnumvert = 1080 / 50;
         private float odnumhoriz = 1920 / 50;
 
-        public int arbitraryEquationX = screen_width / 2 + arbitraryNumY;
-        public int arbitraryEquationY = screen_height / 2 + arbitraryNumX;
+        public int arbitraryEquationX = screen_width / 2;
+        public int arbitraryEquationY = screen_height / 2;
 
         public bool rightarrow = false;
         public bool leftarrow = false;
@@ -83,14 +83,15 @@ namespace snek
            darkgreysquareImg = Content.Load<Texture2D>("darkgreysquareimg");
            lightgreysquareImg = Content.Load<Texture2D>("lightgreysquareimg");
 
-
-
             _Snek_Objects.Add(new Snek(SnekHeadImg, new Vector2(screen_width / 2, (screen_height / 2) - 15), new Vector2(-1, 0), speed, rotation, snekscale, time));
 
             for (int i = 0; i < 4; i++)
             {
-                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(arbitraryEquationX + (arbitraryNumX * i), arbitraryEquationY), new Vector2(-1, 0), speed, rotation, snekscale, time));
+                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(arbitraryEquationX + (50 * i), arbitraryEquationY), new Vector2(-1, 0), speed, rotation, snekscale, time));
             }
+            
+
+
 
             for (int i = 0; i < odnumvert + 1; i++)
             {
@@ -100,22 +101,22 @@ namespace snek
                     {
                         if ((t % 2) != 0)
                         {
-                            _backg_Objects.Add(new gridbackg(lightgreysquareImg, new Vector2(50 * t, 50 * i + 25), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+                            _backg_Objects.Add(new gridbackg(lightgreysquareImg, new Vector2(50 * t, 50 * i), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
                         }
                         else
                         {
-                            _backg_Objects.Add(new gridbackg(darkgreysquareImg, new Vector2(50 * t, 50 * i + 25), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+                            _backg_Objects.Add(new gridbackg(darkgreysquareImg, new Vector2(50 * t, 50 * i), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
                         }
                     }
                     else
                     {
                         if ((t % 2) == 0)
                         {
-                            _backg_Objects.Add(new gridbackg(lightgreysquareImg, new Vector2(50 * t, 50 * i + 25), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+                            _backg_Objects.Add(new gridbackg(lightgreysquareImg, new Vector2(50 * t, 50 * i), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
                         }
                         else
                         {
-                            _backg_Objects.Add(new gridbackg(darkgreysquareImg, new Vector2(50 * t, 50 * i + 25), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+                            _backg_Objects.Add(new gridbackg(darkgreysquareImg, new Vector2(50 * t, 50 * i), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
                         }
                     }
 
@@ -163,13 +164,20 @@ namespace snek
 
         protected override void Update(GameTime gameTime)
         {
-            Random r = new Random();
+
+            
+
+
+
+                Random r = new Random();
 
             int applepos = r.Next(0, _backg_Objects.Count);
 
             if (_Apple_Objects.Count == 0)
             {
                 _Apple_Objects.Add(new Object(AppleImg, new Vector2(_backg_Objects[applepos]._pos.X, _backg_Objects[applepos]._pos.Y), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+
+                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(_Snek_Objects[_Snek_Objects.Count - 1]._pos.X + 50.0f, 0), new Vector2(-1, 0), speed, rotation, snekscale, time));
             }
            
 
@@ -178,11 +186,13 @@ namespace snek
                 
                         if (KeyMouseReader.keyState.IsKeyDown(Keys.Down))
                         {
+                                
                                 for (int a = 0; a < _backg_Objects.Count; a++)
                                 {
-                                    if (_Snek_Objects[0]._pos.X > (_backg_Objects[a]._pos.X) || _Snek_Objects[0]._pos.X < (_backg_Objects[a]._pos.X))
+                                    if (_Snek_Objects[0]._pos.X == (_backg_Objects[a]._pos.X)) 
                                     {
                                         _Snek_Objects[0]._dir = new Vector2(0, 1);
+                                        
                                     }
 
                                 }
@@ -191,7 +201,7 @@ namespace snek
                          {
                               for (int b = 0; b < _backg_Objects.Count; b++)
                               {
-                                    if (_Snek_Objects[0]._pos.X > (_backg_Objects[b]._pos.X) || _Snek_Objects[0]._pos.X < (_backg_Objects[b]._pos.X))
+                                    if (_Snek_Objects[0]._pos.X == (_backg_Objects[b]._pos.X))
                                     {
                                         _Snek_Objects[0]._dir = new Vector2(0, -1);
                                     }
@@ -204,7 +214,7 @@ namespace snek
                         {
                                 for (int c = 0; c < _backg_Objects.Count; c++)
                                 {
-                                    if (_Snek_Objects[0]._pos.Y > (_backg_Objects[c]._pos.Y) || _Snek_Objects[0]._pos.Y < (_backg_Objects[c]._pos.Y))
+                                    if (_Snek_Objects[0]._pos.Y == (_backg_Objects[c]._pos.Y)) 
                                     {
                                         _Snek_Objects[0]._dir = new Vector2(1, 0);
                                     }
@@ -215,7 +225,7 @@ namespace snek
                         {
                                for (int d = 0; d < _backg_Objects.Count; d++)
                                {
-                                      if (_Snek_Objects[0]._pos.Y > (_backg_Objects[d]._pos.Y) || _Snek_Objects[0]._pos.Y < (_backg_Objects[d]._pos.Y))
+                                      if (_Snek_Objects[0]._pos.Y == (_backg_Objects[d]._pos.Y))
                                       {
                                          _Snek_Objects[0]._dir = new Vector2(-1, 0);
                                       }
@@ -224,7 +234,12 @@ namespace snek
 
 
 
+                        if (_Snek_Objects[0].Hit(_Apple_Objects[0]._bb))
+                        {
+                                _Apple_Objects.RemoveAt(0);
+                        }
 
+                        
 
                         if (KeyMouseReader.keyState.IsKeyDown(Keys.Space))
                         {
@@ -239,7 +254,7 @@ namespace snek
 
                         for (int i = 1; i < _Snek_Objects.Count; i++)
                         {
-                            _Snek_Objects[i]._pos = new Vector2(_Snek_Objects[(i - 1)]._pos.X + 65.0f, _Snek_Objects[(i - 1)]._pos.Y);
+                            _Snek_Objects[i]._pos = new Vector2(_Snek_Objects[(i - 1)]._pos.X + 50.0f, _Snek_Objects[(i - 1)]._pos.Y);
                         }
 
 
