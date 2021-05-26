@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace snek
 {
-    public class Object
+    public class Loadingscreens
     {
         protected Texture2D _img;
         public Vector2 _pos;
@@ -22,7 +22,7 @@ namespace snek
         public bool hit;
 
 
-        public Object(Texture2D img, Vector2 pos, Vector2 dir, float speed, float rotation, float scale, double time)
+        public Loadingscreens(Texture2D img, Vector2 pos, Vector2 dir, float speed, float scale)
         {
 
             Random r = new Random();
@@ -31,18 +31,15 @@ namespace snek
             this._pos = pos;
             this._dir = dir;
             this._speed = speed;
-            this._time = time;
             this._origin = Vector2.Zero;
-            this._scale = scale;
-            this._bb = new Rectangle((int)pos.X, (int)pos.Y, 50, 50);
-            this._rotation = rotation;
+            this._scale = scale; this._bb = new Rectangle((int)pos.X, (int)pos.Y, img.Width, img.Height);
             this._color = Color.White;
         }
-        
+
 
         public virtual void Update(int screen_width, int screen_height)
         {
-            
+
         }
 
         public virtual void Draw(SpriteBatch sb)
@@ -50,25 +47,7 @@ namespace snek
             sb.Draw(_img, _pos, null, _color, _rotation, _origin, _scale, SpriteEffects.None, 0.0f);
         }
 
-        public bool Hit(Rectangle otherbb)
-        {
-
-
-            if (_bb.Intersects(otherbb))
-            {
-
-                return true;
-
-
-            }
-            return false;
-
-
-
-
-
-
-        }
+        
     }
 
 

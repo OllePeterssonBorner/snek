@@ -9,7 +9,11 @@ namespace snek
 {
     [System.Runtime.InteropServices.Guid("D024C003-7B5E-4B5C-9FF6-D1235315B79B")]
     public class Game1 : Game
+
     {
+
+        private SpriteFont font;
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -18,8 +22,11 @@ namespace snek
         public List<Object> _Misc_Objects;
         public List<gridbackg> _backg_Objects;
         public List<Object> _Apple_Objects;
+        public List<Loadingscreens> _Loadingscreens;
+
         public int[] _TurnX = new int[21];
         public int[] _TurnY = new int[21];
+
 
 
         public static int screen_width = 1000;
@@ -28,32 +35,53 @@ namespace snek
         public static int arbitraryNumX = 65;
         public static int arbitraryNumY = 185;
 
-        private float odnumvert = screen_width / 50;
-        private float odnumhoriz = screen_height / 50;
+        private float odnumvert = (screen_width - 50) / 50;
+        private float odnumhoriz = (screen_height - 50) / 50;
 
         public int arbitraryEquationX = screen_width / 2;
         public int arbitraryEquationY = screen_height / 2;
 
-        //public bool rightarrow = false;
-        //public bool leftarrow = false;
-        //public bool uparrow = false;
-        //public bool downarrow = false;
+        public bool dieded = false;
+        public bool hepressbutton = false;
 
         public float speed = 0.0f;
         public float rotation = 0.0f;
         public float imgscale = 1.0f;
         public float snekscale = 1.0f;
         public float time;
+        private int applecounter;
 
         public Texture2D SnekBodImg;
         public Texture2D SnekHeadImg;
         public Texture2D AppleImg;
         public Texture2D darkgreysquareImg;
         public Texture2D lightgreysquareImg;
+        public Texture2D deathsceneImg;
 
-       
+        //int gameState = 1; //0 => meny | 1 => spela snake | 2 => death meny
+
+       enum GameStates
+        {
+            menu = 0,
+            play,
+            death,
+
+
+        }
+         enum Gamemodes
+        {
+            normal = 0,
+            enemies,
+            hardcore,
+        }
+
+
+        
+
         public Game1()
         {
+            
+
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -61,21 +89,23 @@ namespace snek
 
         protected override void Initialize()
         {
-            
+
+
             _Objects = new List<Object>();
             _Snek_Objects = new List<Object>();
             _Misc_Objects = new List<Object>();
             _backg_Objects = new List<gridbackg>();
             _Apple_Objects = new List<Object>();
-
+            _Loadingscreens = new List<Loadingscreens>();
+            currentState = GameStates.play;
 
             //TurnX/Y lista
-           
+
 
             for (int i = 0; i < screen_width / 50; i++)
             {
-                _TurnX[i] = (50 * i);
-                _TurnY[i] = _TurnX[i];
+                _TurnX[i] = (50 * i) - 15;
+                _TurnY[i] = (50 * i);
             }
 
 
@@ -90,24 +120,26 @@ namespace snek
         {
             Random r = new Random();
 
+            font = Content.Load<SpriteFont>("applecounter");
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-           SnekBodImg = Content.Load<Texture2D>("snekbodyman");
-           SnekHeadImg = Content.Load<Texture2D>("snekheadyman");
-           AppleImg = Content.Load<Texture2D>("appleimg");
-           darkgreysquareImg = Content.Load<Texture2D>("darkgreysquareimg");
-           lightgreysquareImg = Content.Load<Texture2D>("lightgreysquareimg");
+            deathsceneImg = Content.Load<Texture2D>("deathscene");
+            SnekBodImg = Content.Load<Texture2D>("detkropp");
+            SnekHeadImg = Content.Load<Texture2D>("dethuvud");
+            AppleImg = Content.Load<Texture2D>("äppelfotografi");
+            darkgreysquareImg = Content.Load<Texture2D>("darkgreysquareimg");
+            lightgreysquareImg = Content.Load<Texture2D>("lightgreysquareimg");
 
-            _Snek_Objects.Add(new Snek(SnekHeadImg, new Vector2(screen_width / 2, (screen_height / 2) - 15), new Vector2(-1, 0), speed, rotation, snekscale, time));
+            _Snek_Objects.Add(new Snek(SnekHeadImg, new Vector2(screen_width / 2, (screen_height / 2)), new Vector2(-1, 0), speed, rotation, snekscale, time));
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
-                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(arbitraryEquationX + (50 * i), arbitraryEquationY), new Vector2(-1, 0), speed, rotation, snekscale, time));
+                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(arbitraryEquationX + (50 * i) + 50, arbitraryEquationY), new Vector2(-1, 0), speed, rotation, snekscale, time));
             }
 
 
-           
-            
+
 
             for (int i = 0; i < odnumvert + 1; i++)
             {
@@ -136,177 +168,255 @@ namespace snek
                         }
                     }
 
-                    
+
                 }
             }
 
-            
 
 
 
         }
 
-        //public bool DoesInputKey(Keys keyData)
-        //{
-        //    KeyMouseReader.Update();
 
-        //    switch (keyData)
+        private void Death()
+        {
+            for (int i = 0; i < _backg_Objects.Count; i++)
+                {
+                    _backg_Objects.RemoveAt(i);
+                }
+            for (int i = 0; i < _Snek_Objects.Count; i++)
+                {
+                    _Snek_Objects.RemoveAt(i);
+                }
+            
+            _Loadingscreens.Add(new Loadingscreens(deathsceneImg, new Vector2(0, 0), new Vector2(0, 0), 0.0f, 1.0f));
 
-        //    {
-        //        case Keys.Right:
-        //            {
-        //                rightarrow = true;
-        //                return rightarrow;
-        //            }
-        //        case Keys.Left:
-        //            {
-        //                leftarrow = true;
-        //                return leftarrow;
-        //            }
-        //        case Keys.Up:
-        //            {
-        //                uparrow = true;
-        //                return uparrow;
-        //            }
-        //        case Keys.Down:
-        //            {
-        //                downarrow = true;
-        //                return downarrow;
-        //            }
+            currentState = GameStates.death;
+                  
+        }
+      
 
-        //    }
-        //    KeyMouseReader.keyState.IsKeyDown(Keys.Down
-        //}
-
-       
         protected override void Update(GameTime gameTime)
         {
+            if (_Snek_Objects[0]._pos.X <= 1 || _Snek_Objects[0]._pos.X >= (screen_width) || _Snek_Objects[0]._pos.Y <= 1 || _Snek_Objects[0]._pos.Y >= (screen_height))
+            {
+                Death();
+            }
 
+            if (KeyMouseReader.keyState.IsKeyDown(Keys.Enter))
+            {
+                hepressbutton = true;
+            }
+
+            if (currentState == GameStates.death && hepressbutton == true)
+            {
+                currentState = GameStates.play;
+            }
+
+            if (currentState == GameStates.play)
+            {
+
+                _Loadingscreens.Clear();
+
+                for (int i = 1; i < _Snek_Objects.Count; i++)
+                {
+                    if (_Snek_Objects[0]._bb.Intersects(_Snek_Objects[i]._bb) && i != 1)
+                    {
+                        dieded = true;
+                    }
+                }
+
+                if (dieded == true)
+                {
+                    Death();
+                }
+           
+
+                for (int i = 0; i < _Snek_Objects.Count; i++)
+                {
+                    _Snek_Objects[i]._speed = 1.0f;
+                }
             
 
 
 
                 Random r = new Random();
 
-            int applepos = r.Next(0, _backg_Objects.Count);
+                int appleposX = r.Next(0, _TurnX.Length);
+                int appleposY = r.Next(0, _TurnY.Length);
 
-            if (_Apple_Objects.Count == 0)
-            {
-                _Apple_Objects.Add(new Object(AppleImg, new Vector2(_backg_Objects[applepos]._pos.X, _backg_Objects[applepos]._pos.Y), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+                if (_Apple_Objects.Count == 0)
+                {
 
-                _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(_Snek_Objects[_Snek_Objects.Count - 1]._pos.X + 50.0f, 0), new Vector2(-1, 0), speed, rotation, snekscale, time));
-            }
+                    _Apple_Objects.Add(new Object(AppleImg, new Vector2(_TurnX[appleposX] + 15, _TurnY[appleposY] -10), new Vector2(1, 1), 0, 0.0f, 1.0f, 0.0f));
+
+                    applecounter++;
+
+                    if (_Snek_Objects[_Snek_Objects.Count - 1]._dir == new Vector2(0, -1) || _Snek_Objects[_Snek_Objects.Count - 1]._dir == new Vector2(0, 1))
+                    {
+                        _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(_Snek_Objects[_Snek_Objects.Count - 1]._pos.X, _Snek_Objects[_Snek_Objects.Count - 1]._pos.Y + 50.0f), _Snek_Objects[_Snek_Objects.Count - 1]._dir, speed, rotation, snekscale, time));
+
+                    }
+                    else if (_Snek_Objects[_Snek_Objects.Count - 1]._dir == new Vector2(-1, 0) || _Snek_Objects[_Snek_Objects.Count - 1]._dir == new Vector2(1, 0))
+                    {
+                        _Snek_Objects.Add(new Snek(SnekBodImg, new Vector2(_Snek_Objects[_Snek_Objects.Count - 1]._pos.X + 50.0f, _Snek_Objects[_Snek_Objects.Count - 1]._pos.Y), _Snek_Objects[_Snek_Objects.Count - 1]._dir, speed, rotation, snekscale, time));
+
+                    }
+                }
+
+
+
+                KeyMouseReader.Update();
+
+                if (KeyMouseReader.KeyPressed(Keys.F))
+                {
+                    _Apple_Objects.RemoveAt(0);
+                }
+
+
+                else if (_Apple_Objects.Count > 0 &&  _Snek_Objects[0].Hit(_Apple_Objects[0]._bb))
+                {
+                    _Apple_Objects.RemoveAt(0);
+                }
+
+
+
+                if (KeyMouseReader.keyState.IsKeyDown(Keys.Down) && _Snek_Objects[0]._dir.Y != 1)
+                {
+                    for (int a = 0; a < _TurnX.Length; a++)
+                    {
+                        if (_Snek_Objects[0]._pos.X == _TurnX[a])
+                        {
+                            _Snek_Objects[0]._dir = new Vector2(0, 1);
+                        }
+                    }
+                }
+
+                if (KeyMouseReader.keyState.IsKeyDown(Keys.Up) && _Snek_Objects[0]._dir.Y != -1) 
+                {
+                    for (int b = 0; b < _TurnX.Length; b++)
+                    {
+                        if (_Snek_Objects[0]._pos.X == _TurnX[b])
+                        {
+                            _Snek_Objects[0]._dir = new Vector2(0, -1);
+                       
+
+
+
+                        }
+                    }
+                }
+                if (KeyMouseReader.keyState.IsKeyDown(Keys.Right) && _Snek_Objects[0]._dir.X != -1) 
+                {
+                    for (int c = 0; c < _TurnY.Length; c++)
+                    {
+                        if (_Snek_Objects[0]._pos.Y == _TurnY[c])
+                        {
+                            _Snek_Objects[0]._dir = new Vector2(1, 0);
+                        
+                        }
+                    }
+                }
+                if (KeyMouseReader.keyState.IsKeyDown(Keys.Left) && _Snek_Objects[0]._dir.X != 1)
+                {
+                    for (int d = 0; d < _TurnY.Length; d++)
+                    {
+                        if (_Snek_Objects[0]._pos.Y == _TurnY[d])
+                        {
+                            _Snek_Objects[0]._dir = new Vector2(-1, 0);
+                        
+                        }
+                    }
+                }
+
+        
+
+                for (int i = 1; i < _Snek_Objects.Count; i++)
+                {
+                    if (_Snek_Objects[i - 1]._dir.Y == 0)
+                    {
+
+                        if (_Snek_Objects[i]._dir.Y == 1)
+                        {
+                            if (_Snek_Objects[i]._pos.Y >= _Snek_Objects[i - 1]._pos.Y)
+                            {
+                                _Snek_Objects[i]._dir = _Snek_Objects[i - 1]._dir;
+                            }
+
+                        }
+                        else if (_Snek_Objects[i]._dir.Y == -1)
+                        {
+                            if (_Snek_Objects[i]._pos.Y <= _Snek_Objects[i - 1]._pos.Y)
+                            {
+                                _Snek_Objects[i]._dir = _Snek_Objects[i - 1]._dir;
+                            }
+                        }
+
+                    }
+                    else if (_Snek_Objects[i - 1]._dir.X == 0)
+                    {
+
+                        if (_Snek_Objects[i]._dir.X == 1)
+                        {
+                            if (_Snek_Objects[i]._pos.X >= _Snek_Objects[i - 1]._pos.X)
+                            {
+                                _Snek_Objects[i]._dir = _Snek_Objects[i - 1]._dir;
+                            }
+                        }
+                        else if (_Snek_Objects[i]._dir.X == -1)
+                        {
+                            if (_Snek_Objects[i]._pos.X <= _Snek_Objects[i - 1]._pos.X)
+                            {
+                                _Snek_Objects[i]._dir = _Snek_Objects[i - 1]._dir;
+                            }
+                        }
+
+                    }
+
+
+                }
+
+
+
+                for (int i = 1; i < _Snek_Objects.Count; i++)
+                {
+                    
+                    _Snek_Objects[i]._pos += _Snek_Objects[i - 1]._dir * speed;
+
+                }
+
+            
+            
+
+
+                float speedmodifyer = speed;
+
+
+
+
+
            
 
-            KeyMouseReader.Update();
-            
-                
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.Down))
-            {
-                Vector2 currentPos = _Snek_Objects[0]._pos;
-                Vector2 currentDir = _Snek_Objects[0]._dir;
 
 
-                if (currentPos.X >= 125 && currentPos.X < 175)
+
+
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    Exit();
+
+                foreach (Snek o in _Snek_Objects)
                 {
-                    float nextTurnPosition = 125;
+                    o.Update(screen_width, screen_height);
                 }
 
-                if (currentPos.X >= 75 && currentPos.X < 125)
+                foreach (gridbackg o in _backg_Objects)
                 {
-                    float nextTurnPosition = 75;
-                    
+                    o.Update(screen_width, screen_height);
                 }
-
-                //UPPDATERA SNAKE
-
-               if (snake.pos < nextTurnPosition)
+                foreach (Object o in _Apple_Objects)
                 {
-                    snake.pos = nextturnposition;
+                    o.Update(screen_width, screen_height);
                 }
-                
-                //for (int a = 0; a  < _TurnX.Length; a++)
-                //{
-                //    if (_Snek_Objects[0]._pos.X == _TurnX[a])
-                //    {
-                //        _Snek_Objects[0]._dir = new Vector2(0, 1);
-
-                //    }
-                //}
-            }
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.Up))
-                {
-                    //for (int b = 0; b < _TurnX.Length; b++)
-                    //{
-                    //      if (_Snek_Objects[0]._pos.X == _TurnX[b])
-                    //      {
-                    //          _Snek_Objects[0]._dir = new Vector2(0, -1);
-                    //      }
-                    //}
-            }
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.Right))
-            {
-                    //for (int c = 0; c < _TurnY.Length; c++)
-                    //{
-                    //    if (_Snek_Objects[0]._pos.Y == _TurnY[c])
-                    //    {
-                    //        _Snek_Objects[0]._dir = new Vector2(1, 0);
-                    //    }
-                    //}  
-            }
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.Left) && (_Snek_Objects[0]._dir != new Vector2(-1, 0)))
-            {
-                    //for (int d = 0; d < _TurnY.Length; d++)
-                    //{
-                    //       if (_Snek_Objects[0]._pos.Y == _TurnY[d])
-                    //       {
-                    //          _Snek_Objects[0]._dir = new Vector2(-1, 0);
-                    //       }
-                    //}
-            }
-
-
-
-            if (_Snek_Objects[0].Hit(_Apple_Objects[0]._bb))
-            {
-                    _Apple_Objects.RemoveAt(0);
-            }
-
-                        
-
-            if (KeyMouseReader.keyState.IsKeyDown(Keys.Space))
-            {
-                _Snek_Objects[0]._speed = 0.0f;
-
-
-            }
-            if (KeyMouseReader.keyState.IsKeyUp(Keys.Space))
-            {
-                _Snek_Objects[0]._speed = 2.0f;
-            }
-
-            for (int i = 1; i < _Snek_Objects.Count; i++)
-            {
-                _Snek_Objects[i]._pos = new Vector2(_Snek_Objects[(i - 1)]._pos.X + 50.0f, _Snek_Objects[(i - 1)]._pos.Y);
-            }
-
-                        
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            foreach (Snek o in _Snek_Objects)
-            {
-                o.Update(screen_width, screen_height);
-            }
-
-            foreach (gridbackg o in _backg_Objects)
-            {
-                o.Update(screen_width, screen_height);
-            }
-            foreach (Object o in _Apple_Objects)
-            {
-                o.Update(screen_width, screen_height);
             }
 
             base.Update(gameTime);
@@ -319,24 +429,43 @@ namespace snek
 
             _spriteBatch.Begin();
 
-            foreach (gridbackg o in _backg_Objects)
+            if (currentState == GameStates.play)
             {
-                o.Draw(_spriteBatch);
+
+                foreach (gridbackg o in _backg_Objects)
+                {
+                    o.Draw(_spriteBatch);
+                }
+
+                foreach (Snek o in _Snek_Objects)
+                {
+                    o.Draw(_spriteBatch);
+                }
+
+                foreach (Object o in _Apple_Objects)
+                {
+                    o.Draw(_spriteBatch);
+                }
+
+                //if (dieded != true)
+                //{
+                    _spriteBatch.DrawString(font, "Score:" + applecounter, new Vector2(125, 100), Color.Black);
+                //}
+            }
+            else if (currentState == GameStates.death)
+            {
+                foreach (Loadingscreens o in _Loadingscreens)
+                {
+                    o.Draw(_spriteBatch);
+                }
+                _spriteBatch.DrawString(font, " Your score this round:" + applecounter, new Vector2(450, 500), Color.Red);
+
             }
 
-            foreach (Snek o in _Snek_Objects)
-            {
-                o.Draw(_spriteBatch);
-            }
-            
-            foreach (Object o in _Apple_Objects)
-            {
-                o.Draw(_spriteBatch);
-            }
 
             _spriteBatch.End();
 
-            base.Draw(gameTime); 
+            base.Draw(gameTime);
         }
     }
 }

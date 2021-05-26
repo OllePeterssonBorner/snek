@@ -12,15 +12,15 @@ namespace snek
         public Snek(Texture2D img, Vector2 pos, Vector2 dir, float speed, float rotation, float scale, double time) :
             base(img, pos, dir, speed, rotation, scale, time)
         {
-
+            
         }
 
         public override void Update(int screen_width, int screen_height)
         {
             base.Update(screen_width, screen_height);
             //_rotation += 0.03f;
-           _pos += _dir * _speed;
-            _bb = new Rectangle((int)_pos.X, (int)_pos.Y, _img.Width, _img.Height);
+            _pos += _dir * _speed;
+            _bb = new Rectangle((int)_pos.X, (int)_pos.Y, 50, 50);
         }
 
         public override void Draw(SpriteBatch sb)
