@@ -9,15 +9,15 @@ namespace snek
 {
     public class Object
     {
-        protected Texture2D _img;
+        public Texture2D _img;
         public Vector2 _pos;
         public Vector2 _dir;
         public float _speed;
         protected Color _color;
         protected double _time;
-        protected Vector2 _origin;
+        protected Vector2 _origin = Vector2.Zero;
         protected float _scale;
-        protected float _rotation;
+        public float _rotation;
         public Rectangle _bb;
         public bool hit;
 
@@ -42,7 +42,8 @@ namespace snek
 
         public virtual void Update(int screen_width, int screen_height)
         {
-            
+            _pos += _dir * _speed;
+            _bb = new Rectangle(_pos.ToPoint(), new Point(50, 50));
         }
 
         public virtual void Draw(SpriteBatch sb)
